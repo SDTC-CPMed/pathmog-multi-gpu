@@ -1,18 +1,19 @@
 """
-模型训练模块
+Training package.
 
-包含训练脚本、训练引擎和损失函数：
-- train.py: 统一训练脚本
-- engine.py: 训练和验证引擎
-- loss.py: Cox损失等损失函数定义
+- train.py: sequential single-device CV
+- train_multi_gpu.py: up to 4 GPUs, one fold per GPU (remaining folds queued)
+- fold_train.py: shared single-fold training helpers (DRY)
+- verbosity.py: quiet|normal|verbose|debug logging levels
+- engine.py / loss.py: train step and Cox loss
 """
 
 from .engine import train_one_epoch, evaluate
 from .loss import cox_loss
 
 __all__ = [
-    'train_one_epoch',
-    'evaluate',
-    'cox_loss',
+    "train_one_epoch",
+    "evaluate",
+    "cox_loss",
 ]
 

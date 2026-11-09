@@ -80,7 +80,7 @@ def main():
         "data_path": osp.join(processed_data_dir, "hierarchical_patient_data"),
         "clinical_data_path": osp.join(processed_data_dir, "patient_clinical_features.csv"),
         "survival_data_path": osp.join(processed_data_dir, "patient_survival.csv"),
-        "output_dir": osp.join(project_root, "moghet", "results", f"hierarchical_model_{dataset_name.lower()}_fast"),
+        "output_dir": osp.join(project_root, "results", f"hierarchical_model_{dataset_name.lower()}_fast"),
         "device": "cuda" if torch.cuda.is_available() else "cpu",
         "epochs": 200,
         "batch_size": 16,  # 只改这里，从4到16
@@ -110,7 +110,7 @@ def main():
         print("\n--- [警告] 正在以冒烟测试模式运行 ---")
         config["epochs"] = 2
         config["n_splits"] = 2 # 使用2折以加快速度
-        config["output_dir"] = osp.join(project_root, "moghet", "results", f"hierarchical_model_{dataset_name.lower()}_smoke_test")
+        config["output_dir"] = osp.join(project_root, "results", f"hierarchical_model_{dataset_name.lower()}_smoke_test")
 
     os.makedirs(config["output_dir"], exist_ok=True)
     DEVICE = torch.device(config["device"])
@@ -300,9 +300,11 @@ def main():
         val_dataset = HierarchicalDataset(config["data_path"], val_patient_ids, survival_df, val_features_dict)
         test_dataset = HierarchicalDataset(config["data_path"], test_patient_ids, survival_df, test_features_dict)
         
-        train_loader = DataLoader(train_dataset, batch_size=config["batch_size"], shuffle=True, collate_fn=hierarchical_collate_fn, num_workers=128)
-        val_loader = DataLoader(val_dataset, batch_size=config["batch_size"], shuffle=False, collate_fn=hierarchical_collate_fn, num_workers=128)
-        test_loader = DataLoader(test_dataset, batch_size=config["batch_size"], shuffle=False, collate_fn=hierarchical_collate_fn, num_workers=128)
+        # 128 workers freeze/starve small machines; use 0 for smoke tests, else a modest count
+        num_workers = 0 if args.smoke_test else min(4, os.cpu_count() or 1)
+        train_loader = DataLoader(train_dataset, batch_size=config["batch_size"], shuffle=True, collate_fn=hierarchical_collate_fn, num_workers=num_workers)
+        val_loader = DataLoader(val_dataset, batch_size=config["batch_size"], shuffle=False, collate_fn=hierarchical_collate_fn, num_workers=num_workers)
+        test_loader = DataLoader(test_dataset, batch_size=config["batch_size"], shuffle=False, collate_fn=hierarchical_collate_fn, num_workers=num_workers)
         
         # 创建模型
         first_graph = train_dataset[0]['intra_pathway_graphs'][0]

@@ -1,0 +1,28 @@
+{
+  "num_pathways": 372,
+  "metadata": [
+    [
+      "gene"
+    ],
+    [
+      [
+        "gene",
+        "compound",
+        "gene"
+      ],
+      [
+        "gene",
+        "indirect_effect",
+        "gene"
+      ]
+    ]
+  ],
+  "clinical_in_features": 10,
+  "pathway_embedding_dim": 8,
+  "gnn_hidden_channels": 64,
+  "pathway_out_channels": 128,
+  "intra_attention_hidden_channels": 128,
+  "inter_attention_hidden_channels": 128,
+  "clinical_hidden_channels": 32,
+  "final_hidden_channels": 64
+}

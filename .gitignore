@@ -2,11 +2,23 @@
 moghet/data/
 moghet/results/
 moghet/figtable/
+raw/
+data/
+wiki/ 
+docs/
 
 # Standard Python ignores
 __pycache__/
 *.py[cod]
 *$py.class
+.venv/
+venv/
+env/
+
+# Virtual environments
+*.egg-info/
+dist/
+build/
 
 # PyTorch model files
 *.pt
